@@ -33,7 +33,7 @@ function toggleAnswer(btn){const panel=btn.nextElementSibling;panel.classList.to
      이름이 기기(localStorage)에 평문으로 남지 않게 하기 위해서다.
    - 옛 파일 호환 (이미 암호화해 올린 페이지는 손대지 않아도 된다):
        · data-cat 없음 + 선지(ol.choices) 있음  → 첫 분류로 취급
-       · class="q-card oracle" (옛 신탁, 기본 숨김) → 마지막 분류로 취급
+       · class="q-card oracle" (옛 예측, 기본 숨김) → 마지막 분류로 취급
        · 선지도 data-cat도 없는 안내 카드        → 필터하지 않음(항상 표시)
 
    ▣ 분류 이름을 저장소에 남기지 않기
@@ -168,7 +168,7 @@ function toggleOracle(){ if (window.__sokCatToggle) window.__sokCatToggle(); }
       if (el.classList.contains('no-questions')) continue;  // 문항이 없는 강의의 자동 안내 카드
       var cat = el.getAttribute('data-cat');
       if (!cat) {
-        if (el.classList.contains('oracle')) cat = QCAT.order[QCAT.order.length - 1]; // 옛 신탁(기본 숨김) → 마지막 분류
+        if (el.classList.contains('oracle')) cat = QCAT.order[QCAT.order.length - 1]; // 옛 예측(기본 숨김) → 마지막 분류
         else if (el.querySelector('ol.choices')) cat = QCAT.order[0];                 // 선지만 있는 옛 카드 → 첫 분류
         else continue;                                    // 선지 없는 안내 카드 → 항상 표시
         el.setAttribute('data-cat', cat);
@@ -395,7 +395,7 @@ function toggleOracle(){ if (window.__sokCatToggle) window.__sokCatToggle(); }
 })();
 
 /* ============================================================
-   하단 이전/다음 신탁 내비게이션 (#pagerNav)
+   하단 이전/다음 내비게이션 (#pagerNav)
    - 강의 목록·제목·순서를 전부 pages.js의 TOC_ENC 한 곳에서 읽는다.
      (예전처럼 이웃 파일을 내려받아 제목을 뽑는 일이 없다 → 별도 캐시도 불필요)
    - 잠금 상태이거나 TOC_ENC에 없는 번호의 페이지에서는 표시하지 않는다.

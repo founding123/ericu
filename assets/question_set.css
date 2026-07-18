@@ -257,7 +257,7 @@ main{max-width:var(--maxw); margin:0 auto 64px; padding:0 18px}
 .backpill .arrow{font-size:16px; line-height:1}
 
 /* ============================================================
-   하단 이전/다음 신탁 내비게이션 (#pagerNav)
+   하단 이전/다음 내비게이션 (#pagerNav)
    ============================================================ */
 .pagernav{
   max-width:var(--maxw); margin:0 auto; padding:34px 18px 46px;
@@ -326,7 +326,7 @@ a.pager:hover .pager-arrow{color:var(--gold-deep)}
   .theme-picker button{padding:6px 8px}
   .hero{padding-top:84px}
 }
-/* 좁은 화면: 띠 안에 픽커+신탁버튼을 나란히 둘 폭이 안 나오므로 픽커를 띠 아래로 내림 */
+/* 좁은 화면: 띠 안에 픽커+버튼을 나란히 둘 폭이 안 나오므로 픽커를 띠 아래로 내림 */
 @media (max-width:640px){
   .theme-dock{top:48px; right:14px; left:14px; max-width:none; z-index:1000; justify-content:flex-end}
 }
@@ -347,13 +347,13 @@ a.pager:hover .pager-arrow{color:var(--gold-deep)}
    ============================================================ */
 
 /* 옛 파일 호환: 스크립트가 data-cat을 채우기 전(주입 직후 한 프레임)에도
-   예전 '신탁' 카드가 번쩍 보이지 않게 한다. 정규화가 oracle 클래스를 떼어낸다. */
+   예전 '예측' 카드가 번쩍 보이지 않게 한다. 정규화가 oracle 클래스를 떼어낸다. */
 .q-card.oracle{display:none}
 
 /* 체크 안 된 분류의 카드 숨김 */
 .q-card.cat-hidden{display:none}
 
-/* 옛 '신탁' 구분선은 더 이상 쓰지 않는다 (옛 페이로드에 남아 있어도 항상 숨김) */
+/* 옛 '예측' 구분선은 더 이상 쓰지 않는다 (옛 페이로드에 남아 있어도 항상 숨김) */
 .oracle-divider{display:none!important}
 
 /* 카드 오른쪽 위 분류 표식 — data-cat 값(분류 이름)을 그대로 보여준다.
