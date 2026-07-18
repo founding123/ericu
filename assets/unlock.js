@@ -10,16 +10,6 @@
     return bytes;
   }
 
-  // <script type="application/json"> 페이로드에 {
-  "kdf": "PBKDF2",
-  "hash": "SHA-256",
-  "iterations": 600000,
-  "cipher": "AES-GCM",
-  "salt": "oktkMsdJHMjvarmKkoMkBQ==",
-  "iv": "swm+OKm1do5lvkCM",
-  "data": "ndle1J0h7koqrR+h3s9k+Gw="
-}
-  // 마커가 남아 있어도 JSON.parse가 실패하지 않도록 마커를 벗기고 파싱한다.
   function parsePayloadText(text) {
     return JSON.parse(String(text).replace(/\/\*\s*\[ENCRYPT_(?:START|END)\]\s*\*\//g, '').trim());
   }
