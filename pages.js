@@ -1,3 +1,54 @@
+/* ============================================================
+   사이트 설정 — 강의 정보의 단일 출처
+
+   ▣ 구조 요약 (정보는 한 곳에만 적는다)
+       TOC_ENC        번호 → [강의 제목, 교수 이름]   ← 강의 목록의 전부
+       PROF_NOTE_ENC  교수 이름 → 한 줄 평
+       SITE_ENC       사이트 문구 (제목·강조어·라벨·태그라인·과목명)
+
+     예전의 PAGE_NUMBERS 배열은 없어졌다. 페이지 번호 목록은
+     TOC_ENC의 키에서 자동으로 나온다. PROF_ENC도 필요 없다 —
+     교수 이름이 TOC_ENC 안에 함께 있기 때문이다.
+
+   ▣ 새 페이지 추가하는 법 (이제 두 단계뿐)
+     1) 파일을 ericuNNNN.html 이름으로 올린다.
+        예) ericu0100.html, ericu3050.html
+     2) 아래 TOC_ENC에 한 줄을 추가한다.
+        예) "3050": ["새 강의 제목", "홍길동"],
+     끝. 목차·이전/다음 페이저·문항 페이지 h1·교수별 묶기가
+     전부 이 한 줄을 읽는다.
+
+   ▣ TOC_ENC 항목 형식
+       "번호": ["강의 제목", "교수 이름"]
+
+     · 교수 칸("")을 비워 두면: 예전 방식대로 그 페이지의
+       pageMetaPayload subtitle("22: 이름;")을 내려받아 읽는다.
+       (기존에 배포한 파일들은 그대로 동작한다는 뜻)
+     · 교수 칸을 채우면: 파일을 하나도 내려받지 않고 즉시
+       교수별 묶기가 된다. 채우는 쪽을 권장.
+     · 옛 형식 "번호": "강의 제목" (문자열만)도 계속 읽힌다.
+     · 교수 이름 뒤에 부가 정보를 붙이려면 구분자를 하나 둔다.
+       구분자부터 뒤는 이름에서 잘려 나간다.
+         쓸 수 있는 구분자 :  (   [   ·   ,   /   |   그리고 전각 형태
+         "홍길동 (신규 강의)"  → 홍길동
+       ('-'와 '.'은 구분자가 아니다. 'Kim Sung-ho', 'Prof. Kim'이 잘리므로.)
+
+   ▣ 암호화하는 법 (모든 *_ENC 공통)
+     평문 JSON을 파일로 저장한 뒤 동일한 비밀번호로 암호화해
+     아래 해당 자리에 붙여 넣는다.
+          python tools/encrypt_fragment.py toc.json --password <비밀번호>
+     아직 암호화하지 않은 평문 JSON도 그대로 읽히므로(개발용),
+     로컬에서 먼저 확인하고 배포 전에 암호화하면 된다.
+   ============================================================ */
+
+/* ▣ 사이트 문구
+     title/highlight/eyebrow/tagline : 목차(index) 화면의 문구
+     subject : 문항 페이지 상단의 작은 라벨(eyebrow) 기본값.
+               예전엔 모든 ericu 파일마다 "근골격학"을 반복해 적었지만,
+               이제 여기 한 곳만 적으면 된다.
+               (특정 페이지만 다르게 하려면 그 페이지 pageMetaPayload에
+                "eyebrow"를 적으면 그 값이 우선한다) */
+
 window.SITE_ENC =
 {
   "kdf": "PBKDF2",
@@ -5,10 +56,14 @@ window.SITE_ENC =
   "iterations": 600000,
   "cipher": "AES-GCM",
   "salt": "oktkMsdJHMjvarmKkoMkBQ==",
-  "iv": "xd07KLxBhnR3TeNh",
-  "data": "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"
+  "iv": "6Uqho8l6Kc4+FPxi",
+  "data": "5bvw8EsD/NNPjy0OjUBjJBZFkFWEM6OZsq38LrKGezQ07UXjzNb7VAiRqrj1UUv6cq5kpkrJs6xfzO6x07TScDXl1g7ggQu9flIoWf64mSeiiZ90NE5GeCcdGBmJXuwq0UPFIaFp0JFIPoACINbWmL1iwMHlU0SLZwmi7+QSYeP4M6r2fIp38sdd8jmkeHJy9FIkPNK7jG+JsLlJmMtEVOlSeI40oe+QtJiveA7obn+Unh7QMpCGw/qBIFAxUhzHqRrDvrtRvnngfm/VajgpJL1ZO5622I8wsii5HevtBnAt3z1h82BXW82BVq/QwhBWFZ695JYCIUTLbAJ/e89ZOkwyspAYAWR6DKpgUzRTcM86JlvYxeqiCoYq4kEVR1jV"
 }
 ;
+
+/* ▣ 강의 목록 — 번호 → [제목, 교수]  (단일 출처)
+     교수 칸은 지금 비워 두었다. 채워 넣는 즉시 '교수별' 묶기가
+     파일 스캔 없이 바로 동작한다. */
 
 window.TOC_ENC =
 {
@@ -17,10 +72,18 @@ window.TOC_ENC =
   "iterations": 600000,
   "cipher": "AES-GCM",
   "salt": "oktkMsdJHMjvarmKkoMkBQ==",
-  "iv": "9mXE3ze2oYkMNTWs",
-  "data": "9TGrZHUzbejMPNAhm9E4yhh/RiNw4mzI0byuAo742cRrImXxJ4q3N8uP5eSpuxIvVa4ke0dN4++EF6iCId2vVcHl2iSw3pHESq1b9HG4jgzYGIuWV5l74zte84vP182xSBFBxngrv7XKeCSlqTd76rUXnBlqY4kk40ID3ACl7ZMlMFU0Q8ZiRIlkOLqB5viWy6+0/+guZIxm3gRDhXwYWXzWtuXiVJO9OxCnJJ32E3UKUmi+ylUv2LDr7FPdc9XQhmLGMhbSclCHbpd5l8baZL+cD8qtJ0Not7tfm1vtVSS2OdvnTuus88ftsH3l5yz+rtVLJg75wfKyQOdR3xRHblVUTokx1FlAta4ICv33b834E9FOgAA9sBh+uAJUpJ26QRklOhXj3oo8+rS8OHER1m6v"
+  "iv": "1N0zICToVAT69w2B",
+  "data": "EaH1WEPtAsBjE6NYklP20s73zjKFPjpTbemaz671Yrxk088vhGTaHlSlUXfn/c3gsR3YizgsCppPUp+ksSCJb8VZ8IAjOqHYAkq+BfoLtSqGonTLqFiTB9KTOmmynEjAuWw="
 }
 ;
+
+/* ▣ 교수 한 줄 평 — 교수 이름 → 한 줄
+     목차를 교수별로 묶으면 머리글에 이름과 함께 이 한 줄이 뜬다.
+
+     · 한 줄 평은 '강의'가 아니라 '교수'에 붙는다. 강의가 5개여도 한 번만.
+     · 키 = TOC_ENC에 적은 교수 이름(또는 subtitle에서 뽑힌 이름).
+       '홍길동.'처럼 마침표가 붙어도 같은 규칙으로 맞춰 준다.
+     · 안 적은 교수는 이름만 뜬다. 통째로 지워도 동작한다. */
 
 window.PROF_NOTE_ENC =
 {
@@ -29,9 +92,12 @@ window.PROF_NOTE_ENC =
   "iterations": 600000,
   "cipher": "AES-GCM",
   "salt": "oktkMsdJHMjvarmKkoMkBQ==",
-  "iv": "aCBeRCO1cIIz3y0w",
-  "data": "YYQf8ovQBEwLiO/jw38eQ6GnDosE1OlHrPALF1GYYJBWcJnX01Rrsyf4Hy0gE6+Ub8tVTTLwmzXTj+CHnGNRxbWV9bk+wDnXAgz7cNX7t2ybeOoCBq0cohCH1UoC0fLFAnkvM9Dega5JE2k9A1oEtmffgvzpR5wV7Dbq9pghEGkD50J+aKlVcifUi0hwHr4gRqQ6ElN3NlztzFBDxwbBlBMgRTvoEJSSKURM8zRQCx7tPrP138df1VmLDF8XTzblBY6Ud3pSuY4ZqCOeX2s6gpfxo1nGrYcp1QN0e3aC2ZqxmBTLeNxUnaunMEjNm+QzdHvVRbsFLXt/z7DUWLcPJq7heAwSjoR1JuuPrA5QsxQQJv9sdn2beOmctc5TcEAYXbuWDua9yWlvFrYt/nIw3GSLZJcW+9pFf+I9jEIHtKapCGQBYlyLHekiSoPDeAII9KN75t9bsWgxO+4ChnmsTcLZX998Zly8k5j+a+oTni9etmn8X8os0mWwwTB/BJAmCQ6666uPpAoAxno4A7Ig5QPwPBmqk3Aczz0SVP0045ANlj3LmdA2ZFg+QMnkxvgPs8r46uVE9JKtYM4eDl62LzdSZ1kuvgwh7WECrN6C5ohcUOCnkSeXpaAi4r6MPW+f5SABEYz1g7n+Vqu86r+DJ6nZvrNCUDO1kPIaz17bRD9uyoLg5YU4eQq1pYLkxkdlLVrA8hsgHSKc5PMa+fry8Oj2k8/AJX9FjLP6ucg15e4gXUvZYRjFLL0fYHMSuzYDPQeLFuohdYUJ16vMt4GlEGxDhggEVxPufrVBPxGDL6mr+PYKA53pq0z2Vq0EegW466RHNRpEVcvHQOuinnt8SebFhccuj/95a4zDbFhpZEJQ1NgRnuRJZ4eiAO9/mKFwgXIfDr2/H7R+NjTbNjWLoNIXaxrtf5CTrB0P9RSsb8mtoaaKAXRuv3pUBIrLleSRMW0CY/MUF339iA=="
+  "iv": "qyvyu9kDhD6fDweW",
+  "data": "LIuT1Z7XUkDrd2ckBlI8mk0pynWHjozM7rbJx+fFe2ZyFBTwLSPLeq4zhLabLof/mAYP7Y9uACU/PXQ0cGjrCNgy3ZdFjrVyW+QsQg=="
 }
 ;
+
+// 파일명 접두어 — index.html과 assets/question_set.js가 이 값을 읽는다.
+// 파일명 규칙이 바뀌면 여기 한 곳만 고친다.
 
 window.FILE_PREFIX = 'ericu';
